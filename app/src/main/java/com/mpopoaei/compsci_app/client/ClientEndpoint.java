@@ -76,7 +76,7 @@ public class ClientEndpoint implements Runnable{
     private void createSocket(){
         try {
             this.webSocket = new WebSocketFactory()
-                    .createSocket("ws://130.162.182.203:8080");
+                    .createSocket("ws://10.14.32.106:8080");
             this.webSocket.addListener(new WebSocketAdapter() {
             @Override
             public void onTextMessage(WebSocket ws, String message) {

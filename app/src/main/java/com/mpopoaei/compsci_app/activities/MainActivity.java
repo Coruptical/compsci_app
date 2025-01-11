@@ -1,5 +1,6 @@
-package com.mpopoaei.compsci_app;
+package com.mpopoaei.compsci_app.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -8,9 +9,15 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.mpopoaei.compsci_app.R;
 import com.mpopoaei.compsci_app.client.ClientEndpoint;
 
 public class MainActivity extends AppCompatActivity {
+    private static ClientEndpoint client;
+
+    public static ClientEndpoint getClient() {
+        return client;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,12 +25,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Button buttonLogin = findViewById(R.id.buttonLogin);
         Button buttonRegister = findViewById(R.id.buttonRegister);
-        EditText etUsername = findViewById(R.id.etUsername);
-        EditText etPassword = findViewById(R.id.etPassword);
+        EditText etUsername = findViewById(R.id.regUsername);
+        EditText etPassword = findViewById(R.id.regPassword);
 
         buttonLogin.setOnClickListener(v -> handleButtonLogin(v, etUsername, etPassword));
 
         buttonRegister.setOnClickListener(v -> handleButtonRegister(v));
+
+        client = new ClientEndpoint();
     }
 
     public void handleButtonLogin(View view, EditText etUsername, EditText etPassword){
@@ -38,14 +47,14 @@ public class MainActivity extends AppCompatActivity {
             Log.d("client-connection", "Successfully connected client endpoint");
             // Send login request with input username + pass
             clientEndpoint.sendLoginRequest(username, password);
-            Thread.sleep(1000);
-            clientEndpoint.SendDisconnect();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void handleButtonRegister(View view){
-
+        Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+        startActivity(intent);
+        this.finish();
     }
 }

@@ -10,6 +10,7 @@ import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.mpopoaei.compsci_app.R;
+import com.mpopoaei.compsci_app.client.ClientHandler;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -40,6 +41,8 @@ public class RegisterActivity extends AppCompatActivity {
         String password = etPassword.getText().toString().trim();
 
         Log.d("client-debug", username + " " + password);
+
+        ClientHandler.getInstance().getClient().sendRegister(username, password);
     }
 
 

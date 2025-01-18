@@ -1,8 +1,19 @@
 package com.mpopoaei.compsci_app.client;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import java.util.ArrayList;
+
 public final class ClientHandler {
     private static ClientEndpoint client;
     private boolean isRunning = false;
+
+    private ArrayList<JsonObject> serverResponses = new ArrayList<>();
+
+    public ArrayList<JsonObject> getServerResponses() {
+        return serverResponses;
+    }
 
     private ClientHandler(){
 

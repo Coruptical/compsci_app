@@ -12,6 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.mpopoaei.compsci_app.R;
 import com.mpopoaei.compsci_app.client.ClientEndpoint;
 import com.mpopoaei.compsci_app.client.ClientHandler;
+import com.mpopoaei.compsci_app.client.ResponseHandler;
+import com.mpopoaei.compsci_app.client.models.Response;
+import com.mpopoaei.compsci_app.client.models.requests.RequestType;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
         // Connect to oracle cloud server WebSocket and try login
 
         ClientHandler.getInstance().getClient().sendLoginRequest(username, password);
+
+
     }
 
     public void handleButtonRegister(View view){

@@ -3,6 +3,8 @@ package com.mpopoaei.compsci_app.client;
 import android.util.Log;
 import android.view.PixelCopy;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.mpopoaei.compsci_app.client.models.Response;
@@ -26,6 +28,29 @@ public class ClientEndpoint implements Runnable{
         createSocket();
     }
 
+    private void createSocket(){
+        try {
+            this.webSocket = new WebSocketFactory()
+                    .createSocket("ws://192.168.0.17:8080");
+            this.webSocket.addListener(new WebSocketAdapter() {
+                @Override
+                public void onTextMessage(WebSocket ws, String message) {
+                    Response response = gson.fromJson(message, Response.class);
+                    Log.d("server-response", response.toString());
+                    RequestType type = RequestType.valueOf(response.getRequest().strip());
+                    if (type.equals(RequestType.REGISTER)){
+                        Log.d("client-debug", "Register response detected");
+                        ResponseHandler.getInstance().addResponse(RequestType.REGISTER, response);
+                    } else if(type.equals(RequestType.LOGIN)){
+                        ResponseHandler.getInstance().addResponse(RequestType.LOGIN, response);
+                    }
+
+                }});
+            this.webSocket.connect();
+        } catch (WebSocketException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public void SendDisconnect(){
         DisconnectRequest request = new DisconnectRequest("");
@@ -44,21 +69,7 @@ public class ClientEndpoint implements Runnable{
         RegisterRequest request = new RegisterRequest(username, password);
         request.sendRequest(this.webSocket, request);
 
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                while (!ResponseHandler.getInstance().hasResponse(RequestType.REGISTER)) {
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
-            }
-        };
-        Thread thread = new Thread(runnable);
-        thread.start();
+        Thread thread = getThread(RequestType.REGISTER);
         try {
             thread.join();
         } catch (InterruptedException e) {
@@ -70,25 +81,11 @@ public class ClientEndpoint implements Runnable{
         return response;
     }
 
-    public void sendLoginRequest(String username, String password){
+    public Response sendLoginRequest(String username, String password){
         LoginRequest request = new LoginRequest(username, password);
         request.sendRequest(this.webSocket, request);
 
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                while (!ResponseHandler.getInstance().hasResponse(RequestType.LOGIN)) {
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
-            }
-        };
-        Thread thread = new Thread(runnable);
-        thread.start();
+        Thread thread = getThread(RequestType.LOGIN);
         try {
             thread.join();
         } catch (InterruptedException e) {
@@ -97,6 +94,7 @@ public class ClientEndpoint implements Runnable{
 
         Response response = ResponseHandler.getInstance().consumeResponse(RequestType.LOGIN);
         Log.d("client-debug", response.toString());
+        return response;
     }
 
     public void sendUserMessage(String message, String targetUsername){
@@ -127,28 +125,38 @@ public class ClientEndpoint implements Runnable{
     public void sendMessage(String msg){
         this.webSocket.sendText(msg);
     }
+    
+    public Response sendGetFriendList(){
+        ServerRequest request = new ServerRequest(RequestType.GET_FRIEND_LIST);
+        request.sendRequest(this.webSocket, request);
 
-    private void createSocket(){
+        Thread thread = getThread(RequestType.GET_FRIEND_LIST);
         try {
-            this.webSocket = new WebSocketFactory()
-                    .createSocket("ws://10.14.32.106:8080");
-            this.webSocket.addListener(new WebSocketAdapter() {
-            @Override
-            public void onTextMessage(WebSocket ws, String message) {
-                Response response = gson.fromJson(message, Response.class);
-                Log.d("server-response", response.toString());
-                RequestType type = RequestType.valueOf(response.getRequest().strip());
-                if (type.equals(RequestType.REGISTER)){
-                    Log.d("client-debug", "Register response detected");
-                    ResponseHandler.getInstance().addResponse(RequestType.REGISTER, response);
-                } else if(type.equals(RequestType.LOGIN)){
-                    ResponseHandler.getInstance().addResponse(RequestType.LOGIN, response);
-                }
-                
-            }});
-            this.webSocket.connect();
-        } catch (WebSocketException | IOException e) {
+            thread.join();
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
+        return ResponseHandler.getInstance().consumeResponse(RequestType.GET_FRIEND_LIST);
+    }
+
+    @NonNull
+    private static Thread getThread(RequestType requestType) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                while (!ResponseHandler.getInstance().hasResponse(requestType)) {
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+            }
+        };
+        Thread thread = new Thread(runnable);
+        thread.start();
+        return thread;
     }
 }

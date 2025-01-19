@@ -13,11 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.mpopoaei.compsci_app.R;
 import com.mpopoaei.compsci_app.client.ClientHandler;
-import com.mpopoaei.compsci_app.client.ResponseHandler;
 import com.mpopoaei.compsci_app.client.models.Response;
-import com.mpopoaei.compsci_app.client.models.requests.RequestType;
-
-import java.util.concurrent.Future;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -36,15 +32,15 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void onButtonLoginClick(View v){
         Log.d("client-debug", "To login button pressed");
-        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
         startActivity(intent);
         this.finish();
     }
     // TODO: Password standards for user to input
     // TODO: Create timeout for responses, so app doesn't crash
     private void onButtonRegisterClick(View v){
-        EditText etUsername = findViewById(R.id.regUsername);
-        EditText etPassword = findViewById(R.id.regPassword);
+        EditText etUsername = findViewById(R.id.logUsername);
+        EditText etPassword = findViewById(R.id.logPassword);
 
         String username = etUsername.getText().toString().trim();
         String password = etPassword.getText().toString().trim();

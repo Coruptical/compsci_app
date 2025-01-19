@@ -8,5 +8,6 @@ public enum RequestType {
     USER_REMOVE_FRIEND,
     USER_ACCEPT_REQUEST,
     USER_DENY_REQUEST,
-    DISCONNECT
+    DISCONNECT,
+    GET_FRIEND_LIST
 }

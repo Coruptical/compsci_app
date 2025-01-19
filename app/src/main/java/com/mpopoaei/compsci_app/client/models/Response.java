@@ -1,7 +1,4 @@
 package com.mpopoaei.compsci_app.client.models;
-
-import androidx.annotation.NonNull;
-
 public class Response {
     private String request;
     private boolean responseSuccess;

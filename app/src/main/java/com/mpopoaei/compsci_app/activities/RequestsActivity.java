@@ -34,10 +34,10 @@ public class RequestsActivity extends AppCompatActivity {
         });
 
         // Visuals
-
+        // TODO: Get and display requests on layout
         ScrollView scrollView = findViewById(R.id.reqScrollView);
         LinearLayout layout = (LinearLayout) scrollView.getChildAt(0);
 
-        // Add friend requests to layout
+        // TODO: Make a "add a friend" field
     }
 }

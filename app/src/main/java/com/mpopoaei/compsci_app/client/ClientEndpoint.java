@@ -22,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
 public class ClientEndpoint implements Runnable{
     private WebSocket webSocket;
     private final Gson gson = new Gson();
+    private final String SERVER_ADDRESS = "10.14.32.106";
 
     @Override
     public void run() {
@@ -31,7 +32,7 @@ public class ClientEndpoint implements Runnable{
     private void createSocket(){
         try {
             this.webSocket = new WebSocketFactory()
-                    .createSocket("ws://192.168.0.17:8080");
+                    .createSocket(String.format("ws://%s:8080", SERVER_ADDRESS));
             this.webSocket.addListener(new WebSocketAdapter() {
                 @Override
                 public void onTextMessage(WebSocket ws, String message) {
@@ -43,6 +44,8 @@ public class ClientEndpoint implements Runnable{
                         ResponseHandler.getInstance().addResponse(RequestType.REGISTER, response);
                     } else if(type.equals(RequestType.LOGIN)){
                         ResponseHandler.getInstance().addResponse(RequestType.LOGIN, response);
+                    } else if (type.equals(RequestType.GET_FRIEND_LIST)){
+                        ResponseHandler.getInstance().addResponse(RequestType.GET_FRIEND_LIST, response);
                     }
 
                 }});

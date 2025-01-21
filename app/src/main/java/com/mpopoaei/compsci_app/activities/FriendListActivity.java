@@ -2,6 +2,7 @@ package com.mpopoaei.compsci_app.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -11,6 +12,9 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.mpopoaei.compsci_app.R;
+import com.mpopoaei.compsci_app.client.ClientHandler;
+
+import java.util.ArrayList;
 
 public class FriendListActivity extends AppCompatActivity {
 
@@ -26,8 +30,8 @@ public class FriendListActivity extends AppCompatActivity {
 
 
         // TODO: Add friends to layout
-        ScrollView scrollView = findViewById(R.id.friendListScrollView);
-        LinearLayout layout = (LinearLayout) scrollView.getChildAt(0);
+        Log.d("client-debug", ClientHandler.getInstance().getFriends().toString());
+
 
     }
 

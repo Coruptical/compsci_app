@@ -36,8 +36,7 @@ public class RegisterActivity extends AppCompatActivity {
         startActivity(intent);
         this.finish();
     }
-    // TODO: Password standards for user to input
-    // TODO: Create timeout for responses, so app doesn't crash
+    // TODO: Password standards for users?S
     private void onButtonRegisterClick(View v){
         EditText etUsername = findViewById(R.id.logUsername);
         EditText etPassword = findViewById(R.id.logPassword);
@@ -67,10 +66,6 @@ public class RegisterActivity extends AppCompatActivity {
         regResponseText.setVisibility(View.VISIBLE);
     }
 
-    private void hideResponse(){
-        TextView regResponseText = findViewById(R.id.regResponseText);
-        regResponseText.setVisibility(View.GONE);
-    }
 
 
 }

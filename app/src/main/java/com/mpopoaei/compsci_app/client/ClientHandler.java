@@ -1,12 +1,23 @@
 package com.mpopoaei.compsci_app.client;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.TypeAdapter;
+import com.google.gson.reflect.TypeToken;
 import com.mpopoaei.compsci_app.client.models.Response;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public final class ClientHandler {
     private boolean isAuthenticated = false;
@@ -60,7 +71,7 @@ public final class ClientHandler {
     }
 
     // Client methods
-    public ArrayList<String> getFriends(){ 
+    public ArrayList<String> getFriends(){
         ArrayList<String> friends = new ArrayList<>();
         if (!isAuthenticated) {
             return friends;
@@ -68,9 +79,15 @@ public final class ClientHandler {
 
         Response response = client.sendGetFriendList();
         if (!response.isResponseSuccess()) return friends;
+        try {
+            JSONArray jsonArray = new JSONArray(response.getMessage());
+            for (int i = 0; i< jsonArray.length(); i++){
+                friends.add(jsonArray.getString(i));
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
 
-        friends = (ArrayList<String>)
-                Arrays.asList(new Gson().fromJson(response.getMessage(), String[].class));
         return friends;
     }
 }

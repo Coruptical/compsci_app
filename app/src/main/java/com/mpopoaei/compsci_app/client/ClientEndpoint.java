@@ -22,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 public class ClientEndpoint implements Runnable{
     private WebSocket webSocket;
     private final Gson gson = new Gson();
-    private final String SERVER_ADDRESS = "10.14.32.106";
+    private final String SERVER_ADDRESS = "192.168.0.17";
 
     @Override
     public void run() {
@@ -36,15 +36,17 @@ public class ClientEndpoint implements Runnable{
             this.webSocket.addListener(new WebSocketAdapter() {
                 @Override
                 public void onTextMessage(WebSocket ws, String message) {
+                    Log.d("client-debug", message);
                     Response response = gson.fromJson(message, Response.class);
-                    Log.d("server-response", response.toString());
                     RequestType type = RequestType.valueOf(response.getRequest().strip());
                     if (type.equals(RequestType.REGISTER)){
                         Log.d("client-debug", "Register response detected");
                         ResponseHandler.getInstance().addResponse(RequestType.REGISTER, response);
                     } else if(type.equals(RequestType.LOGIN)){
+                        Log.d("client-debug", "Login response detected");
                         ResponseHandler.getInstance().addResponse(RequestType.LOGIN, response);
                     } else if (type.equals(RequestType.GET_FRIEND_LIST)){
+                        Log.d("client-debug", "Get friend list response detected");
                         ResponseHandler.getInstance().addResponse(RequestType.GET_FRIEND_LIST, response);
                     }
 
@@ -140,7 +142,9 @@ public class ClientEndpoint implements Runnable{
             throw new RuntimeException(e);
         }
 
-        return ResponseHandler.getInstance().consumeResponse(RequestType.GET_FRIEND_LIST);
+        Response response = ResponseHandler.getInstance().consumeResponse(RequestType.GET_FRIEND_LIST);
+        Log.d("client-debug", response.toString());
+        return response;
     }
 
     @NonNull

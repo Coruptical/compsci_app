@@ -13,7 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.mpopoaei.compsci_app.R;
 import com.mpopoaei.compsci_app.client.ClientHandler;
+import com.mpopoaei.compsci_app.client.models.Response;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class FriendListActivity extends AppCompatActivity {
@@ -30,7 +32,8 @@ public class FriendListActivity extends AppCompatActivity {
 
 
         // TODO: Add friends to layout
-        Log.d("client-debug", ClientHandler.getInstance().getFriends().toString());
+        ArrayList<String> response = ClientHandler.getInstance().getFriends();
+        Log.d("client-debug", response.toString());
 
 
     }

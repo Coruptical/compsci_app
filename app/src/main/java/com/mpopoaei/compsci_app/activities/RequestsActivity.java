@@ -38,6 +38,7 @@ public class RequestsActivity extends AppCompatActivity {
         ScrollView scrollView = findViewById(R.id.reqScrollView);
         LinearLayout layout = (LinearLayout) scrollView.getChildAt(0);
 
-        // TODO: Make a "add a friend" field
+        // TODO: Make a "add a friend" button
+
     }
 }

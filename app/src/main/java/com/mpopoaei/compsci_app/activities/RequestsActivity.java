@@ -33,6 +33,13 @@ public class RequestsActivity extends AppCompatActivity {
             this.finish();
         });
 
+        Button addFriendButton = findViewById(R.id.reqAddFrBut);
+        addFriendButton.setOnClickListener(v -> {
+            Intent intent = new Intent(RequestsActivity.this, AddFriendActivity.class);
+            startActivity(intent);
+            this.finish();
+        });
+
         // Visuals
         // TODO: Get and display requests on layout
         ScrollView scrollView = findViewById(R.id.reqScrollView);

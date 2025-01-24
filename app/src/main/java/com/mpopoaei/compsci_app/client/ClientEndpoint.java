@@ -22,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 public class ClientEndpoint implements Runnable{
     private WebSocket webSocket;
     private final Gson gson = new Gson();
-    private final String SERVER_ADDRESS = "192.168.0.17";
+    private final String SERVER_ADDRESS = "10.14.32.106";
 
     @Override
     public void run() {
@@ -48,6 +48,9 @@ public class ClientEndpoint implements Runnable{
                     } else if (type.equals(RequestType.GET_FRIEND_LIST)){
                         Log.d("client-debug", "Get friend list response detected");
                         ResponseHandler.getInstance().addResponse(RequestType.GET_FRIEND_LIST, response);
+                    } else if(type.equals(RequestType.USER_ADD_FRIEND)){
+                        Log.d("client-debug", "Add friend response detected");
+                        ResponseHandler.getInstance().addResponse(RequestType.USER_ADD_FRIEND, response);
                     }
 
                 }});
@@ -107,9 +110,20 @@ public class ClientEndpoint implements Runnable{
         request.sendRequest(this.webSocket, request);
     }
 
-    public void sendUserAddFriend(String targetUsername){
+    public Response sendUserAddFriend(String targetUsername){
         UserAddFriendRequest request = new UserAddFriendRequest(targetUsername);
         request.sendRequest(this.webSocket, request);
+
+        Thread thread = getThread(RequestType.USER_ADD_FRIEND);
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        Response response = ResponseHandler.getInstance().consumeResponse(RequestType.USER_ADD_FRIEND);
+        Log.d("client-debug", response.toString());
+        return response;
     }
 
     public void sendUserRemoveFriend(String targetUsername){

@@ -51,8 +51,25 @@ public class ClientEndpoint implements Runnable{
                     } else if(type.equals(RequestType.USER_ADD_FRIEND)){
                         Log.d("client-debug", "Add friend response detected");
                         ResponseHandler.getInstance().addResponse(RequestType.USER_ADD_FRIEND, response);
+                    } else if (type.equals(RequestType.GET_FRIEND_REQUESTS)){
+                        Log.d("client-debug", "Get friend requests response detected");
+                        ResponseHandler.getInstance().addResponse(RequestType.GET_FRIEND_REQUESTS, response);
+                    } else if (type.equals(RequestType.USER_ACCEPT_REQUEST)){
+                        Log.d("client-debug", "User accept response detected");
+                        ResponseHandler.getInstance().addResponse(RequestType.USER_ACCEPT_REQUEST, response);
+                    } else if (type.equals(RequestType.USER_DENY_REQUEST)){
+                        Log.d("client-debug", "User deny response detected");
+                        ResponseHandler.getInstance().addResponse(RequestType.USER_DENY_REQUEST, response);
+                    } else if(type.equals(RequestType.USER_REMOVE_FRIEND)){
+                        Log.d("client-debug", "User remove friend response detected");
+                        ResponseHandler.getInstance().addResponse(RequestType.USER_REMOVE_FRIEND, response);
+                    } else if (type.equals(RequestType.USER_MESSAGE)){
+                        Log.d("client-debug", "User message response detected");
+                        ResponseHandler.getInstance().addResponse(RequestType.USER_MESSAGE, response);
+                    } else if (type.equals(RequestType.GET_MESSAGES)){
+                        Log.d("client-debug", "User get message response detected");
+                        ResponseHandler.getInstance().addResponse(RequestType.GET_MESSAGES, response);
                     }
-
                 }});
             this.webSocket.connect();
         } catch (WebSocketException | IOException e) {
@@ -105,9 +122,20 @@ public class ClientEndpoint implements Runnable{
         return response;
     }
 
-    public void sendUserMessage(String message, String targetUsername){
+    public Response sendUserMessage(String message, String targetUsername){
         UserMessageRequest request = new UserMessageRequest(message, targetUsername);
         request.sendRequest(this.webSocket, request);
+
+        Thread thread = getThread(RequestType.USER_MESSAGE);
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        Response response = ResponseHandler.getInstance().consumeResponse(RequestType.USER_MESSAGE);
+        Log.d("client-debug", response.toString());
+        return response;
     }
 
     public Response sendUserAddFriend(String targetUsername){
@@ -126,19 +154,52 @@ public class ClientEndpoint implements Runnable{
         return response;
     }
 
-    public void sendUserRemoveFriend(String targetUsername){
+    public Response sendUserRemoveFriend(String targetUsername){
         UserRemoveFriendRequest request = new UserRemoveFriendRequest(targetUsername);
         request.sendRequest(this.webSocket, request);
-    }
 
-    public void sendUserAcceptFriend(String targetUsername){
+        Thread thread = getThread(RequestType.USER_REMOVE_FRIEND);
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        Response response = ResponseHandler.getInstance().consumeResponse(RequestType.USER_REMOVE_FRIEND);
+        Log.d("client-debug", response.toString());
+        return response;
+    }
+    
+    public Response sendUserAcceptFriend(String targetUsername){
         UserAcceptRequest request = new UserAcceptRequest(targetUsername);
         request.sendRequest(this.webSocket, request);
+
+        Thread thread = getThread(RequestType.USER_ACCEPT_REQUEST);
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        Response response = ResponseHandler.getInstance().consumeResponse(RequestType.USER_ACCEPT_REQUEST);
+        Log.d("client-debug", response.toString());
+        return response;
     }
 
-    public void sendUserDenyFriend(String targetUsername){
+    public Response sendUserDenyFriend(String targetUsername){
         UserDenyRequest request = new UserDenyRequest(targetUsername);
         request.sendRequest(this.webSocket, request);
+
+        Thread thread = getThread(RequestType.USER_DENY_REQUEST);
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        Response response = ResponseHandler.getInstance().consumeResponse(RequestType.USER_DENY_REQUEST);
+        Log.d("client-debug", response.toString());
+        return response;
     }
 
     public void sendMessage(String msg){
@@ -157,6 +218,39 @@ public class ClientEndpoint implements Runnable{
         }
 
         Response response = ResponseHandler.getInstance().consumeResponse(RequestType.GET_FRIEND_LIST);
+        Log.d("client-debug", response.toString());
+        return response;
+    }
+
+    public Response sendGetFriendRequests(){
+        RequestType type = RequestType.GET_FRIEND_REQUESTS;
+        ServerRequest request = new ServerRequest(type);
+        request.sendRequest(this.webSocket, request);
+
+        Thread thread = getThread(type);
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        Response response = ResponseHandler.getInstance().consumeResponse(type);
+        Log.d("client-debug", response.toString());
+        return response;
+    }
+
+    public Response sendGetMessages(String friendName, int page){
+        GetMessagesRequest request = new GetMessagesRequest(friendName, page);
+        request.sendRequest(this.webSocket, request);
+
+        Thread thread = getThread(RequestType.GET_MESSAGES);
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        Response response = ResponseHandler.getInstance().consumeResponse(RequestType.GET_MESSAGES);
         Log.d("client-debug", response.toString());
         return response;
     }

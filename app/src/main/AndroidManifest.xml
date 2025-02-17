@@ -16,6 +16,9 @@
         android:theme="@style/Theme.Compsci_app"
         tools:targetApi="31">
         <activity
+            android:name=".activities.ChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.AddFriendActivity"
             android:exported="false" />
         <activity

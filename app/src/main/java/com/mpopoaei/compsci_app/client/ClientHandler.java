@@ -8,21 +8,33 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
+import com.mpopoaei.compsci_app.client.models.Message;
 import com.mpopoaei.compsci_app.client.models.Response;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public final class ClientHandler {
     private boolean isAuthenticated = false;
     private static ClientEndpoint client;
     private boolean isRunning = false;
+    private String username = "";
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     private ArrayList<JsonObject> serverResponses = new ArrayList<>();
 
@@ -79,15 +91,57 @@ public final class ClientHandler {
 
         Response response = client.sendGetFriendList();
         if (!response.isResponseSuccess()) return friends;
+
+        friends = getStringListFromJson(response.getMessage());
+
+        return friends;
+    }
+
+    public ArrayList<String> getFriendRequests(){
+        ArrayList<String> requests = new ArrayList<>();
+
+        if(!isAuthenticated){
+            return requests;
+        }
+
+        Response response = client.sendGetFriendRequests();
+        if(!response.isResponseSuccess()) return requests;
+
+        requests = getStringListFromJson(response.getMessage());
+
+        return requests;
+    }
+
+    // Utility methods
+    private ArrayList<String> getStringListFromJson(String data){
+        ArrayList<String> list = new ArrayList<>();
+
         try {
-            JSONArray jsonArray = new JSONArray(response.getMessage());
+            JSONArray jsonArray = new JSONArray(data);
             for (int i = 0; i< jsonArray.length(); i++){
-                friends.add(jsonArray.getString(i));
+                list.add(jsonArray.getString(i));
             }
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
+        return list;
+    }
 
-        return friends;
+    public static ArrayList<Message> getMessagesFromData(String data){
+        ArrayList<Message> list = new ArrayList<>();
+
+        Gson gson = new Gson();
+        Log.d("client-debug", data);
+        try {
+            JSONArray jsonArray = new JSONArray(data);
+            for (int i = 0; i< jsonArray.length(); i++){
+                JSONObject object = jsonArray.getJSONObject(i);
+                Message message = gson.fromJson(object.toString(), Message.class);
+                list.add(message);
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return list;
     }
 }

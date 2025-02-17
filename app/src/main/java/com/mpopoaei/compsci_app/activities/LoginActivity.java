@@ -43,6 +43,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (response.isResponseSuccess()){
             ClientHandler.getInstance().setAuthenticated(true);
+            ClientHandler.getInstance().setUsername(username);
             Intent intent = new Intent(LoginActivity.this, FriendListActivity.class);
             startActivity(intent);
             this.finish();

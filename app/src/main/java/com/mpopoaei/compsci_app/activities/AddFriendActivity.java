@@ -45,6 +45,7 @@ public class AddFriendActivity extends AppCompatActivity {
 
         Response response = ClientHandler.getInstance().getClient().sendUserAddFriend(targetUsername);
         showResponse(response.isResponseSuccess(), response.getMessage(), targetUsername);
+        etUsername.setText("");
     }
 
     private void showResponse(boolean success, String response_message, String targetUsername){
@@ -58,7 +59,7 @@ public class AddFriendActivity extends AppCompatActivity {
             } else if (response_message.equalsIgnoreCase("FRIEND_CONNECTION_EXISTS")){
                 frAddResponseText.setText("You are already friends with this user.");
             } else if (response_message.equalsIgnoreCase("FRIEND_REQUEST_EXISTS")){
-                frAddResponseText.setText("This user already has an outgoing friend request from you.");
+                frAddResponseText.setText("This user already has an outgoing request.");
             }
             frAddResponseText.setTextColor(Color.parseColor("#FF0000"));
         }

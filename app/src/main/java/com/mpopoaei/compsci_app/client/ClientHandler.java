@@ -1,6 +1,9 @@
 package com.mpopoaei.compsci_app.client;
 
+import android.os.Handler;
 import android.util.Log;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -10,23 +13,65 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.mpopoaei.compsci_app.client.models.Message;
 import com.mpopoaei.compsci_app.client.models.Response;
+import com.mpopoaei.compsci_app.utils.ChatMessagesAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 
 public final class ClientHandler {
     private boolean isAuthenticated = false;
     private static ClientEndpoint client;
     private boolean isRunning = false;
     private String username = "";
+
+    private ChatMessagesAdapter chatMessagesAdapter;
+    private ArrayList<Message> chatMessages;
+    private String activeChatUsername = null;
+    private Handler handler;
+    private RecyclerView chatRecyclerView;
+
+    public RecyclerView getChatRecyclerView() {
+        return chatRecyclerView;
+    }
+
+    public void setChatRecyclerView(RecyclerView chatRecyclerView) {
+        this.chatRecyclerView = chatRecyclerView;
+    }
+
+    public ChatMessagesAdapter getChatMessagesAdapter() {
+        return chatMessagesAdapter;
+    }
+
+    public void setChatMessagesAdapter(ChatMessagesAdapter chatMessagesAdapter) {
+        this.chatMessagesAdapter = chatMessagesAdapter;
+    }
+
+    public ArrayList<Message> getChatMessages() {
+        return chatMessages;
+    }
+
+    public void setChatMessages(ArrayList<Message> chatMessages) {
+        this.chatMessages = chatMessages;
+    }
+
+    public Handler getHandler() {
+        return handler;
+    }
+
+    public void setHandler(Handler handler) {
+        this.handler = handler;
+    }
+
+    public String getActiveChatUsername() {
+        return activeChatUsername;
+    }
+
+    public void setActiveChatUsername(String activeChatUsername) {
+        this.activeChatUsername = activeChatUsername;
+    }
 
     public String getUsername() {
         return username;

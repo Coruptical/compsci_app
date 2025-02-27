@@ -11,5 +11,6 @@ public enum RequestType {
     DISCONNECT,
     GET_FRIEND_LIST,
     GET_FRIEND_REQUESTS,
-    GET_MESSAGES
+    GET_MESSAGES,
+    INCOMING_MESSAGE
 }

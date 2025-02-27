@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.mpopoaei.compsci_app.client.models.Message;
 import com.mpopoaei.compsci_app.client.models.Response;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
@@ -15,6 +16,7 @@ import com.neovisionaries.ws.client.WebSocketFactory;
 import com.mpopoaei.compsci_app.client.models.requests.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -69,6 +71,10 @@ public class ClientEndpoint implements Runnable{
                     } else if (type.equals(RequestType.GET_MESSAGES)){
                         Log.d("client-debug", "User get message response detected");
                         ResponseHandler.getInstance().addResponse(RequestType.GET_MESSAGES, response);
+                    } else if (type.equals(RequestType.INCOMING_MESSAGE)){
+                        Log.d("client-debug", String.format("Incoming message detected: %s", response));
+                        // TODO: Perform ui update logic
+                        handleIncomingMessage(response);
                     }
                 }});
             this.webSocket.connect();
@@ -253,6 +259,32 @@ public class ClientEndpoint implements Runnable{
         Response response = ResponseHandler.getInstance().consumeResponse(RequestType.GET_MESSAGES);
         Log.d("client-debug", response.toString());
         return response;
+    }
+
+    // TODO: Create working logic for handling incoming message response
+    private void handleIncomingMessage(Response response){
+        Message message = gson.fromJson(response.getMessage(), Message.class);
+        Log.d("client-debug", message.toString());
+
+        String targetUsername = message.getUsername();
+        String activeChatUsername = ClientHandler.getInstance().getActiveChatUsername();
+        if (activeChatUsername == null){
+            return;
+        }
+
+        if (targetUsername.equals(activeChatUsername)){
+            // TODO: Perform UI update in the chat activity.
+            ClientHandler.getInstance().getHandler().post(new Runnable() {
+                @Override
+                public void run() {
+                    ArrayList<Message> messages = ClientHandler.getInstance().getChatMessages();
+                    ClientHandler.getInstance().getChatMessages().add(message);
+                    ClientHandler.getInstance().getChatMessagesAdapter().notifyItemInserted(messages.size() - 1);
+                    ClientHandler.getInstance().getChatRecyclerView().smoothScrollToPosition(messages.size() - 1);
+                    Log.d("client-debug", "Performed UI update in chat activity");
+                }
+            });
+        }
     }
 
     @NonNull

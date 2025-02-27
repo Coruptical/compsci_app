@@ -2,6 +2,8 @@ package com.mpopoaei.compsci_app.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -36,12 +38,16 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+
+
         TextView title = findViewById(R.id.username_title);
         recyclerView = findViewById(R.id.recycler_view_messages);
 
         String friendName = getIntent().getStringExtra("friendName");
 
         title.setText(friendName);
+
+
 
         Button buttonSend = findViewById(R.id.send_button);
         buttonSend.setOnClickListener(v -> onSend(v, friendName));
@@ -58,6 +64,17 @@ public class ChatActivity extends AppCompatActivity {
         adapter = new ChatMessagesAdapter(messages, currentUsername);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+
+        recyclerView.smoothScrollToPosition(messages.size() - 1);
+
+        // Set the handler of the ClientHandler class so that it can access this class's context
+        Handler handler = new Handler(this.getMainLooper());
+
+        ClientHandler.getInstance().setHandler(handler);
+        ClientHandler.getInstance().setActiveChatUsername(friendName);
+        ClientHandler.getInstance().setChatMessagesAdapter(this.adapter);
+        ClientHandler.getInstance().setChatMessages(this.messages);
+        ClientHandler.getInstance().setChatRecyclerView(this.recyclerView);
     }
 
     private void onSend(View v, String targetUsername){
@@ -73,10 +90,13 @@ public class ChatActivity extends AppCompatActivity {
 
         messages.add(new Message(ClientHandler.getInstance().getUsername(), msg, timestamp.toString()));
         adapter.notifyItemInserted(messages.size() - 1);
+        recyclerView.smoothScrollToPosition(messages.size() - 1);
         text.setText("");
     }
 
     private void onBack(View v){
+        ClientHandler.getInstance().setActiveChatUsername(null);
+
         Intent intent = new Intent(ChatActivity.this, FriendListActivity.class);
         startActivity(intent);
         this.finish();

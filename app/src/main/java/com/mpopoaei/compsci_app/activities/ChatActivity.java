@@ -65,7 +65,9 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        recyclerView.smoothScrollToPosition(messages.size() - 1);
+        if (!messages.isEmpty()){
+            recyclerView.smoothScrollToPosition(messages.size() - 1);
+        }
 
         // Set the handler of the ClientHandler class so that it can access this class's context
         Handler handler = new Handler(this.getMainLooper());

@@ -13,6 +13,11 @@ import com.mpopoaei.compsci_app.R;
 
 import java.util.ArrayList;
 
+/*
+Friend requests adapter.
+Used to dynamically work with our friend requests screen,
+and is how we populate it with the user's friend requests.
+ */
 public class FriendRequestAdapter extends RecyclerView.Adapter<FriendRequestAdapter.ViewHolder> {
     private final ArrayList<String> friendRequests;
     private final OnFriendRequestActionListener listener;
@@ -27,6 +32,10 @@ public class FriendRequestAdapter extends RecyclerView.Adapter<FriendRequestAdap
         this.listener = listener;
     }
 
+    /*
+    This inflates (adds to) the layout.
+    Creates a new ViewHolder for each list item.
+     */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -35,6 +44,9 @@ public class FriendRequestAdapter extends RecyclerView.Adapter<FriendRequestAdap
         return new ViewHolder(view);
     }
 
+    /*
+    Binds the data of the friend request with its buttons to the corresponding ViewHolder.
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String friendName = friendRequests.get(position);
@@ -48,6 +60,9 @@ public class FriendRequestAdapter extends RecyclerView.Adapter<FriendRequestAdap
         return friendRequests.size();
     }
 
+    /*
+    ViewHolder class to hold a single friend request item for our list.
+     */
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView nameTextView;
         Button acceptButton, declineButton;

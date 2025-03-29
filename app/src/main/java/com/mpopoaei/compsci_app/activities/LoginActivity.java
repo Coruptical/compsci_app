@@ -14,8 +14,16 @@ import com.mpopoaei.compsci_app.R;
 import com.mpopoaei.compsci_app.client.ClientHandler;
 import com.mpopoaei.compsci_app.client.models.Response;
 
+/*
+The login screen.
+ */
 public class LoginActivity extends AppCompatActivity {
 
+    /*
+    Gets called when the app is launched, as this is the main screen defined in the android manifest.
+    This binds all the buttons to their methods, and starts of the chain of screens in the app.
+    The client handler is also created, as this is one of the first pieces of code called.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,10 +41,14 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    /*
+    Attempts to establish an authenticated connection to the server (aka logging in.)
+    If the response is a success, all other requests from the client endpoint will authenticate on the server.
+     */
     public void handleButtonLogin(View view, EditText etUsername, EditText etPassword){
         String username = etUsername.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
-        // Connect to oracle cloud server WebSocket and try login
+        // Connect to server WebSocket and try login
 
         Response response = ClientHandler.getInstance().getClient().sendLoginRequest(username, password);
         showResponse(response.isResponseSuccess(), response.getMessage());
@@ -50,12 +62,18 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    /*
+    Intent to go to the register screen (switches the user to the register screen).
+     */
     public void handleButtonRegister(View view){
         Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
         startActivity(intent);
         this.finish();
     }
 
+    /*
+    Visuals for the user to check why they couldn't login, etc.
+     */
     private void showResponse(boolean success, String response_message){
         TextView regResponseText = findViewById(R.id.logResponseText);
         if (success){

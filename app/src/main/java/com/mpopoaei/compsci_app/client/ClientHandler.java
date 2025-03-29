@@ -6,11 +6,7 @@ import android.util.Log;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.TypeAdapter;
-import com.google.gson.reflect.TypeToken;
 import com.mpopoaei.compsci_app.client.models.Message;
 import com.mpopoaei.compsci_app.client.models.Response;
 import com.mpopoaei.compsci_app.utils.ChatMessagesAdapter;
@@ -21,6 +17,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/*
+Client handler class for the entire application.
+This class acts as the central manager of the client endpoint,
+and stores variables associated to the current user of this application.
+ */
 public final class ClientHandler {
     private boolean isAuthenticated = false;
     private static ClientEndpoint client;
@@ -97,6 +98,9 @@ public final class ClientHandler {
         return instance;
     }
 
+    /*
+    Entry point for the entire program to access the client from.
+     */
     public ClientEndpoint getClient() {
         return client;
     }
@@ -116,6 +120,9 @@ public final class ClientHandler {
         }
     }
 
+    /*
+    Create a non-blocking client-endpoint for the application to run on.
+     */
     private void start(){
         client = new ClientEndpoint();
         Thread thread = new Thread(getClient());
@@ -127,7 +134,9 @@ public final class ClientHandler {
         }
     }
 
-    // Client methods
+    /*
+    Retrieves a list of the user's friends, and formats it as a list ready to use.
+     */
     public ArrayList<String> getFriends(){
         ArrayList<String> friends = new ArrayList<>();
         if (!isAuthenticated) {
@@ -142,6 +151,9 @@ public final class ClientHandler {
         return friends;
     }
 
+    /*
+    Retrieves the user's friend requests, formatting it as a list ready to use.
+     */
     public ArrayList<String> getFriendRequests(){
         ArrayList<String> requests = new ArrayList<>();
 
@@ -157,7 +169,9 @@ public final class ClientHandler {
         return requests;
     }
 
-    // Utility methods
+    /*
+    Takes a JSON string and turns it into a list.
+     */
     private ArrayList<String> getStringListFromJson(String data){
         ArrayList<String> list = new ArrayList<>();
 
@@ -172,6 +186,9 @@ public final class ClientHandler {
         return list;
     }
 
+    /*
+    Attempts to retrieve a list of messages from incoming message JSON objects.
+     */
     public static ArrayList<Message> getMessagesFromData(String data){
         ArrayList<Message> list = new ArrayList<>();
 

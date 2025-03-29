@@ -13,10 +13,15 @@ import com.mpopoaei.compsci_app.client.models.Message;
 
 import java.util.List;
 
+/*
+The chat messages adapter.
+This allows us to dynamically work with our chat screen,
+and is basically the way that we create a chat screen.
+ */
 public class ChatMessagesAdapter extends RecyclerView.Adapter<ChatMessagesAdapter.MessageViewHolder> {
 
-    private static final int VIEW_TYPE_RIGHT = 1;
-    private static final int VIEW_TYPE_LEFT = 2;
+    private static final int VIEW_TYPE_RIGHT = 1; // User message
+    private static final int VIEW_TYPE_LEFT = 2; // Friend message
 
     private List<Message> messages;
     private String username;
@@ -26,10 +31,14 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<ChatMessagesAdapte
         this.username = username;
     }
 
+    /*
+    Compare the message username to the current user's username.
+    This determines which side the message goes on based on the sender.
+     */
     @Override
     public int getItemViewType(int position) {
         Message message = messages.get(position);
-        // Compare the message username to the current user's username.
+
         if (message.getUsername().equals(username)) {
             return VIEW_TYPE_RIGHT;
         } else {
@@ -37,6 +46,10 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<ChatMessagesAdapte
         }
     }
 
+    /*
+    Creates a new ViewHolder for chat messages.
+    This inflates (adds to) the layout based on the message type.
+     */
     @NonNull
     @Override
     public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -51,6 +64,9 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<ChatMessagesAdapte
         return new MessageViewHolder(view);
     }
 
+    /*
+    Binds the message data to the corresponding TextView on the screen.
+     */
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         Message message = messages.get(position);
@@ -62,6 +78,10 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<ChatMessagesAdapte
         return messages.size();
     }
 
+    /*
+    ViewHolder class to hold message views.
+    Each view represents a single message.
+     */
     static class MessageViewHolder extends RecyclerView.ViewHolder {
         TextView messageTextView;
 

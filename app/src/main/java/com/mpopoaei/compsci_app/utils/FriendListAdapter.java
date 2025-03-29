@@ -13,6 +13,11 @@ import com.mpopoaei.compsci_app.R;
 
 import java.util.ArrayList;
 
+/*
+The friend list adapter.
+This is how we dynamically work with our friend list screen,
+and is basically the way to populate it with the user's friends.
+ */
 public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.ViewHolder> {
     private final ArrayList<String> friends;
     private final onFriendListActionListener listener;
@@ -27,6 +32,10 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Vi
         this.listener = listener;
     }
 
+    /*
+    This inflates (adds to) the layout.
+    Creates a new ViewHolder for each friend list item.
+     */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -35,6 +44,9 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Vi
         return new ViewHolder(view);
     }
 
+    /*
+    Binds the data of the friend with its buttons to the corresponding ViewHolder.
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String friendName = friends.get(position);
@@ -48,6 +60,9 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Vi
         return friends.size();
     }
 
+    /*
+    ViewHolder class to hold a single friend list item.
+     */
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView nameTextView;
         Button chatButton, removeButton;

@@ -2,20 +2,10 @@ package com.mpopoaei.compsci_app.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,16 +15,22 @@ import com.mpopoaei.compsci_app.client.models.Response;
 import com.mpopoaei.compsci_app.utils.FriendRequestAdapter;
 
 import java.util.ArrayList;
-import java.util.List;
 
+/*
+The friend requests screen.
+ */
 public class RequestsActivity extends AppCompatActivity {
 
-    // Define the classes that I may need to use to display my visuals for friend requests
     private RecyclerView recyclerView;
     private FriendRequestAdapter adapter;
     private ArrayList<String> friendRequests;
 
 
+    /*
+    Gets called when the screen is created.
+    The buttons are registered to their methods accordingly.
+    Using the friend request adapter, we bind to the recycler view and add our list items dynamically
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,11 +55,9 @@ public class RequestsActivity extends AppCompatActivity {
         // Visuals
         friendRequests = ClientHandler.getInstance().getFriendRequests();
 
-
         recyclerView = findViewById(R.id.recycler_view_friend_requests);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new FriendRequestAdapter(friendRequests, new FriendRequestAdapter.OnFriendRequestActionListener() {
-            // TODO: Send requests to server
             @Override
             public void onAccept(String friendName) {
                 Response response = ClientHandler.getInstance().getClient().sendUserAcceptFriend(friendName);
@@ -92,6 +86,9 @@ public class RequestsActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
+    /*
+    Updates the list visually to remove the item.
+     */
     private void removeFriendRequest(String friendName) {
         friendRequests.remove(friendName);
         adapter.notifyDataSetChanged();

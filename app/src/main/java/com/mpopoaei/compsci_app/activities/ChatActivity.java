@@ -3,18 +3,13 @@ package com.mpopoaei.compsci_app.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,11 +23,21 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 
+/*
+The chat screen.
+This dynamically changes when it's created based on the friend the user clicked in the friends list screen.
+ */
 public class ChatActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ChatMessagesAdapter adapter;
     private ArrayList<Message> messages;
 
+    /*
+    Gets called when the activity (screen) is created.
+    The screen is set up with the friend username at the top.
+    Messages are retrieved by the client and should appear on the left/right sides of the chat.
+    The user can type in the text box and send a message as required.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +84,10 @@ public class ChatActivity extends AppCompatActivity {
         ClientHandler.getInstance().setChatRecyclerView(this.recyclerView);
     }
 
+    /*
+    Attempts to send a message over to the friend
+    Sends a user message request over to the server, then scrolls to the bottom of the chat.
+     */
     private void onSend(View v, String targetUsername){
         EditText text = findViewById(R.id.message_input);
         String msg = text.getText().toString().strip();
@@ -88,14 +97,16 @@ public class ChatActivity extends AppCompatActivity {
 
         Response response = ClientHandler.getInstance().getClient().sendUserMessage(msg, targetUsername);
 
-
-
         messages.add(new Message(ClientHandler.getInstance().getUsername(), msg, timestamp.toString()));
         adapter.notifyItemInserted(messages.size() - 1);
         recyclerView.smoothScrollToPosition(messages.size() - 1);
         text.setText("");
     }
 
+    /*
+    Intent to go back to the friend list screen.
+    Also clears the active chat, so that incoming messages from the server are handled properly.
+     */
     private void onBack(View v){
         ClientHandler.getInstance().setActiveChatUsername(null);
 

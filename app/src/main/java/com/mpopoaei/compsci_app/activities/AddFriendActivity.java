@@ -7,20 +7,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.mpopoaei.compsci_app.R;
 import com.mpopoaei.compsci_app.client.ClientHandler;
 import com.mpopoaei.compsci_app.client.models.Response;
 
+/*
+Add a friend screen
+ */
 public class AddFriendActivity extends AppCompatActivity {
 
+    /*
+    Gets called when the activity (screen) is created.
+    Sets up the buttons on the screen and registers their click listeners for functionality.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,12 +35,18 @@ public class AddFriendActivity extends AppCompatActivity {
         sendRequestButton.setOnClickListener(v -> handleSendClick(v));
     }
 
+    /*
+    An intent for the back button, to take us back to the previous screen.
+     */
     private void backIntent(View v){
         Intent intent = new Intent(AddFriendActivity.this, RequestsActivity.class);
         startActivity(intent);
         this.finish();
     }
 
+    /*
+    Attempts to send an add friend request to the server with the username that the user typed on screen.
+     */
     private void handleSendClick(View v){
         EditText etUsername = findViewById(R.id.addFrUsername);
         String targetUsername = etUsername.getText().toString().strip();
@@ -48,6 +56,9 @@ public class AddFriendActivity extends AppCompatActivity {
         etUsername.setText("");
     }
 
+    /*
+    An on-screen visual of whether the request went through, or given errors accordingly.
+     */
     private void showResponse(boolean success, String response_message, String targetUsername){
         TextView frAddResponseText = findViewById(R.id.addFrResponseText);
         if (success){

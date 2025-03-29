@@ -1,12 +1,10 @@
 package com.mpopoaei.compsci_app.client;
 
 import android.util.Log;
-import android.view.PixelCopy;
 
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.mpopoaei.compsci_app.client.models.Message;
 import com.mpopoaei.compsci_app.client.models.Response;
 import com.neovisionaries.ws.client.WebSocket;
@@ -17,20 +15,30 @@ import com.mpopoaei.compsci_app.client.models.requests.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.CompletableFuture;
 
-
-// TODO: Create rest of methods for client endpoint 
+/**
+ * The client endpoint for this application
+ * This class handles all outgoing requests, as well as incoming requests from the server.
+ * It is designed to be ran in a separate thread, so that it doesn't interfere with the other aspects of the app.
+ */
 public class ClientEndpoint implements Runnable{
     private WebSocket webSocket;
     private final Gson gson = new Gson();
     private final String SERVER_ADDRESS = "10.14.32.106";
 
+    /*
+    Override for the runnable class.
+     */
     @Override
     public void run() {
         createSocket();
     }
 
+    /*
+    Creates the WebSocket connection to the server,
+    and establishes the listener that handles incoming responses.
+    It will detect a response and call the response handler to deal with it accordingly.
+     */
     private void createSocket(){
         try {
             this.webSocket = new WebSocketFactory()
@@ -73,7 +81,6 @@ public class ClientEndpoint implements Runnable{
                         ResponseHandler.getInstance().addResponse(RequestType.GET_MESSAGES, response);
                     } else if (type.equals(RequestType.INCOMING_MESSAGE)){
                         Log.d("client-debug", String.format("Incoming message detected: %s", response));
-                        // TODO: Perform ui update logic
                         handleIncomingMessage(response);
                     }
                 }});
@@ -83,19 +90,13 @@ public class ClientEndpoint implements Runnable{
         }
     }
 
-    public void SendDisconnect(){
-        DisconnectRequest request = new DisconnectRequest("");
-        request.sendRequest(this.webSocket, request);
-        this.webSocket.disconnect();
-    }
-
-    public void SendDisconnect(String reason){
-        DisconnectRequest request = new DisconnectRequest(reason);
-        request.sendRequest(this.webSocket, request);
-        this.webSocket.disconnect();
-    }
 
     // Requests to send to server
+
+    /*
+    Attempts to send a register request to the server, given the username and password.
+    Waits for the response and returns it.
+     */
     public Response sendRegister(String username, String password){
         RegisterRequest request = new RegisterRequest(username, password);
         request.sendRequest(this.webSocket, request);
@@ -112,6 +113,10 @@ public class ClientEndpoint implements Runnable{
         return response;
     }
 
+    /*
+    Attempts to send a login request to the server, given the username and password.
+    Waits for the response and returns it.
+     */
     public Response sendLoginRequest(String username, String password){
         LoginRequest request = new LoginRequest(username, password);
         request.sendRequest(this.webSocket, request);
@@ -128,6 +133,10 @@ public class ClientEndpoint implements Runnable{
         return response;
     }
 
+    /*
+    Attempts to send a message request to the server, given the message and target username.
+    Waits for the response and returns it.
+     */
     public Response sendUserMessage(String message, String targetUsername){
         UserMessageRequest request = new UserMessageRequest(message, targetUsername);
         request.sendRequest(this.webSocket, request);
@@ -144,6 +153,10 @@ public class ClientEndpoint implements Runnable{
         return response;
     }
 
+    /*
+    Attempts to send a friend request to another user, given the target username.
+    Waits for the response and returns it.
+     */
     public Response sendUserAddFriend(String targetUsername){
         UserAddFriendRequest request = new UserAddFriendRequest(targetUsername);
         request.sendRequest(this.webSocket, request);
@@ -160,6 +173,10 @@ public class ClientEndpoint implements Runnable{
         return response;
     }
 
+    /*
+    Attempts to send a user remove friend request to the server, given the target username.
+    Waits for the response and returns it.
+     */
     public Response sendUserRemoveFriend(String targetUsername){
         UserRemoveFriendRequest request = new UserRemoveFriendRequest(targetUsername);
         request.sendRequest(this.webSocket, request);
@@ -175,7 +192,12 @@ public class ClientEndpoint implements Runnable{
         Log.d("client-debug", response.toString());
         return response;
     }
-    
+
+
+    /*
+    Attempts to accept an incoming friend request, given the target username.
+    Waits for the response and returns it.
+     */
     public Response sendUserAcceptFriend(String targetUsername){
         UserAcceptRequest request = new UserAcceptRequest(targetUsername);
         request.sendRequest(this.webSocket, request);
@@ -192,6 +214,10 @@ public class ClientEndpoint implements Runnable{
         return response;
     }
 
+    /*
+    Attempts to deny an incoming friend request, given the target username.
+    Waits for the response and returns it.
+     */
     public Response sendUserDenyFriend(String targetUsername){
         UserDenyRequest request = new UserDenyRequest(targetUsername);
         request.sendRequest(this.webSocket, request);
@@ -208,10 +234,11 @@ public class ClientEndpoint implements Runnable{
         return response;
     }
 
-    public void sendMessage(String msg){
-        this.webSocket.sendText(msg);
-    }
-    
+
+    /*
+    Attempts to retrieve the friend list associated to this WebSocket connection.
+    Waits for the response and returns it.
+     */
     public Response sendGetFriendList(){
         ServerRequest request = new ServerRequest(RequestType.GET_FRIEND_LIST);
         request.sendRequest(this.webSocket, request);
@@ -228,6 +255,10 @@ public class ClientEndpoint implements Runnable{
         return response;
     }
 
+    /*
+    Attempts to retrieve a list of incoming friend requests associated to this client's user.
+    Waits for the response and returns it.
+     */
     public Response sendGetFriendRequests(){
         RequestType type = RequestType.GET_FRIEND_REQUESTS;
         ServerRequest request = new ServerRequest(type);
@@ -245,6 +276,10 @@ public class ClientEndpoint implements Runnable{
         return response;
     }
 
+    /*
+    Attempts to retrieve all of the messages on the specific page, associated to this client's user.
+    Waits for the response and returns it.
+     */
     public Response sendGetMessages(String friendName, int page){
         GetMessagesRequest request = new GetMessagesRequest(friendName, page);
         request.sendRequest(this.webSocket, request);
@@ -261,7 +296,11 @@ public class ClientEndpoint implements Runnable{
         return response;
     }
 
-    // TODO: Create working logic for handling incoming message response
+    /*
+    Attempts to handle an incoming message response from the server.
+    It gets the username of the client's currently open chat (if not null)
+    If the incoming message username is the same as the username from the server, it updates the UI on the user's screen.
+     */
     private void handleIncomingMessage(Response response){
         Message message = gson.fromJson(response.getMessage(), Message.class);
         Log.d("client-debug", message.toString());
@@ -273,7 +312,6 @@ public class ClientEndpoint implements Runnable{
         }
 
         if (targetUsername.equals(activeChatUsername)){
-            // TODO: Perform UI update in the chat activity.
             ClientHandler.getInstance().getHandler().post(new Runnable() {
                 @Override
                 public void run() {
@@ -287,6 +325,10 @@ public class ClientEndpoint implements Runnable{
         }
     }
 
+    /*
+    Utility method for all requests.
+    Runs until the response handler has the given server response of the given the request type, then returns it.
+     */
     @NonNull
     private static Thread getThread(RequestType requestType) {
         Runnable runnable = new Runnable() {

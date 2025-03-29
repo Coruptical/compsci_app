@@ -5,6 +5,10 @@ import com.mpopoaei.compsci_app.client.models.requests.RequestType;
 
 import java.util.HashMap;
 
+/*
+Class that handles all incoming server responses, associating them with a request type,
+and storing the response as a valid Response object.
+ */
 public class ResponseHandler {
     private final HashMap<RequestType, Response> responseMap = new HashMap<>();
 
@@ -24,6 +28,9 @@ public class ResponseHandler {
         responseMap.put(requestType, response);
     }
 
+    /*
+    Take a response from our map given the key and retrieve it.
+     */
     public Response consumeResponse(RequestType requestType){
         Response response = responseMap.get(requestType);
         responseMap.remove(requestType);
